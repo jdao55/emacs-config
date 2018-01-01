@@ -18,19 +18,25 @@
 
 (require 'package)
 
+;adding melpa repository
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 
+
+;remove tool bar
 (tool-bar-mode -1)
 
+;adding colour theme
 (add-to-list 'custom-theme-load-path "/home/joedao/.emacs.d/themes/")
 (load-theme 'atom-one-dark t)
 
+;add linums and set tab size
 (global-linum-mode t)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
 
+;setup flycheck for c++ and rust
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
@@ -40,11 +46,11 @@
                                         ;(add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 
-
+;set indentation style for c and c++
 (setq c++-default-style "linux" c-basic-offset 4)
 (setq c-default-style "linux" c-basic-offset 4)
 
-;; for irony
+;; irony setup
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'objc-mode-hook 'irony-mode)
@@ -52,12 +58,13 @@
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 
+;;set gdb window settings
 (setq
  gdb-many-windows t
  gdb-show-main t
  )
 
-
+;;setup for treemacs
 (use-package treemacs
   :ensure t
   :defer t
@@ -84,9 +91,11 @@
         ("M-0"        . treemacs-select-window))
   )
 
+;;hot keys setup for magit
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
+;;toggle transparentcy
 (defun toggle-transparency ()
   (interactive)
   (let ((alpha (frame-parameter nil 'alpha)))
@@ -99,4 +108,7 @@
               100)
          '(90 . 90) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
-;;; .emacs ends here
+
+
+(provide 'init)
+;;; init.el ends here
