@@ -47,8 +47,19 @@
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 
 ;set indentation style for c and c++
-(setq c++-default-style "linux" c-basic-offset 4)
-(setq c-default-style "linux" c-basic-offset 4)
+;(setq c++-default-style "linux" c-basic-offset 4)
+;setq c-default-style "linux" c-basic-offset 4)
+(defun my-c-mode-common-hook ()
+ 
+  (c-set-offset 'substatement-open 0)
+  (setq c++-tab-always-indent t)
+  (setq c-basic-offset 4)
+  (setq c-indent-level 4)
+  (setq tab-stop-list '(0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60))
+  (setq tab-width 4)
+  )
+
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
 ;; irony setup
 (add-hook 'c++-mode-hook 'irony-mode)
