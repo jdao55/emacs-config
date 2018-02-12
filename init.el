@@ -41,10 +41,19 @@
   :ensure t
   :init (global-flycheck-mode))
 (add-hook 'after-init-hook #'global-flycheck-mode)
-(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++17")))
 (setq-default flycheck-disabled-checkers '(c/c++-clang))
                                         ;(add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+
+;yasnippet
+(add-to-list 'load-path
+              "~/.emacs.d/plugins/yasnippet")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;company mode
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;set indentation style for c and c++
 ;(setq c++-default-style "linux" c-basic-offset 4)
