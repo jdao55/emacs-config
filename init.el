@@ -125,7 +125,7 @@
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
 ;;git gutter
-(global-git-gutter-mode +1)
+;(global-git-gutter-mode +1)
 
 ;;toggle transparentcy
 (defun toggle-transparency ()
