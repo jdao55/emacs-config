@@ -1,3 +1,7 @@
+;;; Package --- Summary
+;;;Emacs setup
+
+;;; Commentary:
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -6,11 +10,11 @@
  '(custom-enabled-themes (quote (challenger-deep)))
  '(custom-safe-themes
    (quote
-    ("ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "dcb9fd142d390bb289fee1d1bb49cb67ab7422cd46baddf11f5c9b7ff756f64c" default)))
+    ("d5fad7cafaaf093c193753d4452d7258e85a76f85cb6b9a31abc6da938bfb292" "5f5e341c93c310495c3751407f05a6202b1d85a5a8c18ec8b5d8e729ac863abc" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "dcb9fd142d390bb289fee1d1bb49cb67ab7422cd46baddf11f5c9b7ff756f64c" default)))
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (projectile ivy flycheck-rust go-mode treemacs challenger-deep-theme company yasnippet-snippets yasnippet use-package flycheck irony magit))))
+    (git-gutter+ projectile ivy flycheck-rust go-mode treemacs challenger-deep-theme company yasnippet-snippets yasnippet use-package flycheck irony magit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -18,6 +22,7 @@
  ;; If there is more than one, they won't work right.
  )
 
+;;; Code:
 ;;;adding melpa
 (require 'package)
 
@@ -47,7 +52,7 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++17")))
 (setq-default flycheck-disabled-checkers '(c/c++-clang))
-                                        ;(add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
+              
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 
 ;yasnippet
@@ -75,7 +80,7 @@
   ;(setq tab-width 4)
   ;)
 
-(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+;(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
 ;; irony setup
 (add-hook 'c++-mode-hook 'irony-mode)
@@ -118,6 +123,9 @@
 ;;hot keys setup for magit
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+
+;;git gutter
+(global-git-gutter-mode +1)
 
 ;;toggle transparentcy
 (defun toggle-transparency ()
