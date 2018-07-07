@@ -40,7 +40,7 @@
 (load-theme 'challenger-deep t)
 
 ;add linums and set tab size
-(global-linum-mode t)
+(setq display-line-numbers-mode t)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
