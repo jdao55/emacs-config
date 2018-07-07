@@ -855,6 +855,11 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
     (declare-function writegood-mode "writegood-mode.el"))
   (add-hook 'org-mode-hook #'writegood-mode)
   )
+;;agenda org mode
+(setq org-agenda-files(list "~/org/work.org"
+                            "~/org/school.org"
+                            "~/org/home.org"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vlf - handle open very large files
@@ -1185,13 +1190,19 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
         (width . 110) (height . 90) ;; size
         ))
 ;; Enable line numbers on the LHS
-(global-linum-mode 1)
+(when (display-graphic-p)
+  ;; Always visit images as images.
+  (auto-image-file-mode)
+  ;; If we're on Emacs 26 or better...
+  (if (> emacs-major-version 25)
+      ;; ...only show line numbers in certain types of modes.
+      (progn
+        (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
+        (add-hook 'text-mode-hook (lambda () (display-line-numbers-mode 1))))
+    ;; ...otherwise use linum-mode.
+(global-linum-mode 1)))
 ;; Set the font to size 9 (90/10).
 (set-face-attribute 'default nil :height my-font-size)
-
-(setq-default indicate-empty-lines t)
-(when (not indicate-empty-lines)
-  (toggle-indicate-empty-lines))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enable which function mode and set the header line to display both the
@@ -1279,6 +1290,7 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
 ;; Call the header line update
 (add-hook 'buffer-list-update-hook
           'sl/display-header)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Powerline theme
