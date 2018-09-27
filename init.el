@@ -1,4 +1,4 @@
-;;; initfile --- Summary:
+;;; init file --- Summary:
 ;;; Commentary:
 ;; Emacs 25.1 and newer tested
 ;;; Code:
@@ -19,44 +19,17 @@
 (defvar my:jupyter_start_dir "/home/nils")
 
 ;; Compilation command for C/C++
-(defvar my:compile-command "clang++ -Wall -Wextra -std=c++14 ")
+(defvar my:compile-command "g++ -Wall -Wextra -O3 -march=native -std=c++2a ")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set packages to install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq package-archives '(("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
-;; Disable package initialize after us.  We either initialize it
-;; anyway in case of interpreted .emacs, or we don't want slow
-;; initizlization in case of byte-compiled .emacs.elc.
-(setq package-enable-at-startup nil)
-;; Ask package.el to not add (package-initialize) to .emacs.
-(setq package--init-file-ensured t)
-;; set use-package-verbose to t for interpreted .emacs,
-;; and to nil for byte-compiled .emacs.elc
-(eval-and-compile
-  (setq use-package-verbose (not (bound-and-true-p byte-compile-current-file))))
-;; Add the macro generated list of package.el loadpaths to load-path.
-(mapc #'(lambda (add) (add-to-list 'load-path add))
-      (eval-when-compile
-        (require 'package)
-        (package-initialize)
-        ;; Install use-package if not installed yet.
-        (unless (package-installed-p 'use-package)
-          (package-refresh-contents)
-          (package-install 'use-package))
-        ;; (require 'use-package)
-        (let ((package-user-dir-real (file-truename package-user-dir)))
-          ;; The reverse is necessary, because outside we mapc
-          ;; add-to-list element-by-element, which reverses.
-          (nreverse (apply #'nconc
-                           ;; Only keep package.el provided loadpaths.
-                           (mapcar #'(lambda (path)
-                                       (if (string-prefix-p package-user-dir-real path)
-                                           (list path)
-                                         nil))
-                                   load-path))))))
+(require 'package)
+
+;adding melpa repository
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(package-initialize)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; By default Emacs triggers garbage collection at ~0.8MB which makes
@@ -178,8 +151,7 @@
           )
 
 ;; Setup use-package
-(eval-when-compile
-  (require 'use-package))
+(require 'use-package)
 (use-package bind-key
   :ensure t)
 ;; so we can (require 'use-package) even in compiled emacs to e.g. read docs
@@ -234,50 +206,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package s
   :ensure t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Automatically compile and save ~/.emacs.el
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun byte-compile-init-files (file)
-  "Automatically compile FILE."
-  (interactive)
-  (save-restriction
-    ;; Suppress the warning when you setq an undefined variable.
-    (if (>= emacs-major-version 23)
-        (setq byte-compile-warnings '(not free-vars obsolete))
-      (setq byte-compile-warnings
-            '(unresolved
-              callargs
-              redefine
-              obsolete
-              noruntime
-              cl-warnings
-              interactive-only)))
-    (byte-compile-file (expand-file-name file)))
-  )
-
-(add-hook
- 'after-save-hook
- (function
-  (lambda ()
-    (if (string= (file-truename "~/.emacs.d/init.el")
-                 (file-truename (buffer-file-name)))
-        (progn
-          (byte-compile-init-files ("~/.emacs.d/init.el"))
-          (rename-file "~/.emacs.d/init.elc" "~/.emacs.elc")))
-    )
-  )
-)
-
-;; Byte-compile again to ~/.emacs.elc if it is outdated
-(if (file-newer-than-file-p
-     (file-truename "~/.emacs.d/init.el")
-     (file-truename "~/.emacs.elc"))
-    (progn
-      (byte-compile-init-files "~/.emacs.d/init.el")
-      (rename-file "~/.emacs.d/init.elc" "~/.emacs.elc")
-      )
-  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;x;;;;;;;;
@@ -347,31 +275,15 @@
           "is recommended you install ripgrep.")
     )
   )
+;;all the icons
+(use-package all-the-icons)
 
-;; tree macs
-(use-package treemacs
+;;put neo tree here
+(use-package neotree
   :ensure t
-  :defer t
-  :config
-  (progn
-    (setq treemacs-follow-after-init          t
-          treemacs-width                      32
-          treemacs-indentation                2
-          treemacs-collapse-dirs              3
-          treemacs-silent-refresh             nil
-          treemacs-sorting                    'alphabetic-desc
-          treemacs-show-hidden-files          t
-          treemacs-is-never-other-window      nil
-          treemacs-goto-tag-strategy          'refetch-index)
-
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t))
-  :bind
-  (:map global-map
-        ([f8]         . treemacs)
-        ("M-0"        . treemacs-select-window)
-        ("C-x n"        . treemacs-next-project))
-)
+  :bind (("<f8>" . neotree-toggle)
+         )
+  :config  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 ;; Use universal ctags to build the tags database for the project.
 ;; When you first want to build a TAGS database run 'touch TAGS'
@@ -681,10 +593,13 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Set the number of spaces that the tab key inserts (usually 2 or 4)
-(setq c-basic-offset 4)
+;; (setq-default c-basic-offset 4)
+(setq-default c-default-style "ellemtel"
+          c-basic-offset 4)
+
 ;; Set the size that a tab CHARACTER is interpreted as
 ;; (unnecessary if there are no tab characters in the file!)
-(setq tab-width 4)
+;;(setq-default tab-width 4)
 
 ;; We want to be able to see if there is a tab character vs a space.
 ;; global-whitespace-mode allows us to do just that.
@@ -1292,6 +1207,22 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
           'sl/display-header)
 
 
+
+;;toggle transparentcy
+(defun toggle-transparency ()
+  "Toggle window transparency."
+  (interactive)
+  (let ((alpha (frame-parameter nil 'alpha)))
+    (set-frame-parameter
+     nil 'alpha
+     (if (eql (cond ((numberp alpha) alpha)
+                    ((numberp (cdr alpha)) (cdr alpha))
+                    ;; Also handle undocumented (<active> <inactive>) form.
+                    ((numberp (cadr alpha)) (cadr alpha)))
+              100)
+         '(85 . 85) '(100 . 100)))))
+(global-set-key (kbd "C-c t") 'toggle-transparency)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Powerline theme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1360,11 +1291,81 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#839496")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
  '(custom-safe-themes
    (quote
-    ("84c45940066499ddd3699a1d66cb85c111a56359f33fcb0aeea31ea7b942eddd" "5f5e341c93c310495c3751407f05a6202b1d85a5a8c18ec8b5d8e729ac863abc" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "bcd8b3fc2d82d764a9692c754485344257caf017d3fbdfb18f4db022a7b9a58f" default)))
- '(fci-rule-color "#3E4451")
+    ("84c45940066499ddd3699a1d66cb85c111a56359f33fcb0aeea31ea7b942eddd" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "2b7242a74c59605fbf9b8d35a3f49883a9fa44aabd0c6cb2455862d88b3867aa" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
+ '(fci-rule-color "#073642")
  '(git-gutter:update-interval 5)
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend it "#002b36" 0.25)
+    (quote
+     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#93a1a1")
+ '(highlight-tail-colors
+   (quote
+    (("#073642" . 0)
+     ("#546E00" . 20)
+     ("#00736F" . 30)
+     ("#00629D" . 50)
+     ("#7B6000" . 60)
+     ("#8B2C02" . 70)
+     ("#93115C" . 85)
+     ("#073642" . 100))))
+ '(hl-bg-colors
+   (quote
+    ("#7B6000" "#8B2C02" "#990A1B" "#93115C" "#3F4D91" "#00629D" "#00736F" "#546E00")))
+ '(hl-fg-colors
+   (quote
+    ("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
+ '(hl-paren-colors (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
+ '(magit-diff-use-overlays nil)
+ '(nrepl-message-colors
+   (quote
+    ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (atom-one-dark-theme markdown-mode ein web-mode writegood-mode string-inflection flycheck-ycmd company-ycmd elpy auto-package-update zzz-to-char ycmd yasnippet-snippets yarn-mode yapfify yaml-mode window-numbering which-key wgrep vlf use-package treemacs sourcerer-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-rust flycheck-pyflakes edit-server cuda-mode counsel-etags company-jedi cmake-font-lock clang-format challenger-deep-theme beacon autopair auctex))))
+    (all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+ '(pos-tip-background-color "#073642")
+ '(pos-tip-foreground-color "#93a1a1")
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
+ '(term-default-bg-color "#002b36")
+ '(term-default-fg-color "#839496")
+ '(vc-annotate-background nil)
+ '(vc-annotate-background-mode nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#dc322f")
+     (40 . "#c8805d801780")
+     (60 . "#bec073400bc0")
+     (80 . "#b58900")
+     (100 . "#a5008e550000")
+     (120 . "#9d0091000000")
+     (140 . "#950093aa0000")
+     (160 . "#8d0096550000")
+     (180 . "#859900")
+     (200 . "#66aa9baa32aa")
+     (220 . "#57809d004c00")
+     (240 . "#48559e556555")
+     (260 . "#392a9faa7eaa")
+     (280 . "#2aa198")
+     (300 . "#28669833af33")
+     (320 . "#279993ccbacc")
+     (340 . "#26cc8f66c666")
+     (360 . "#268bd2"))))
+ '(vc-annotate-very-old-color nil)
+ '(weechat-color-list
+   (quote
+    (unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83")))
+ '(xterm-color-names
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
+ '(xterm-color-names-bright
+   ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
