@@ -120,6 +120,7 @@
 ;; terminal
 (when (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode))
   (menu-bar-mode -1))
+(toggle-scroll-bar -1)
 
 ;; Don't ring the bell
 (setq ring-bell-function 'ignore)
@@ -283,7 +284,10 @@
   :ensure t
   :bind (("<f8>" . neotree-toggle)
          )
-  :config  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (setq neo-show-hidden-files t))
+
 
 ;; Use universal ctags to build the tags database for the project.
 ;; When you first want to build a TAGS database run 'touch TAGS'
@@ -1333,7 +1337,7 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
