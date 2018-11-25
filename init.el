@@ -594,6 +594,7 @@
   )
 
 ;; Change tab key behavior to insert spaces instead
+
 (setq-default indent-tabs-mode nil)
 
 ;; Set the number of spaces that the tab key inserts (usually 2 or 4)
