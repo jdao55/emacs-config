@@ -8,15 +8,6 @@
 ;; Defines global variables that are later used to customize and set
 ;; up packages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Specify the ycmd server command and path to the ycmd directory *inside* the
-;; cloned ycmd directory
-(defvar my:ycmd-server-command '("python" "/home/nils/Research/ycmd/ycmd"))
-(defvar my:ycmd-extra-conf-whitelist '("~/.ycm_extra_conf.py"))
-(defvar my:ycmd-global-config "~/.ycm_extra_conf.py")
-
-;; Specify the jupyter executable name, and the start dir of the server
-(defvar my:jupyter_location (executable-find "jupyter"))
-(defvar my:jupyter_start_dir "/home/nils")
 
 ;; Compilation command for C/C++
 (defvar my:compile-command "g++ -Wall -Wextra -O3 -march=native -std=c++2a ")
@@ -624,60 +615,6 @@
 ;; Enable hide/show of code blocks
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Package: ycmd (YouCompleteMeDaemon)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Set up YouCompleteMe for emacs:
-;; https://github.com/Valloric/ycmd
-;; https://github.com/abingham/emacs-ycmd
-(defvar my:python-location (executable-find (nth 0 my:ycmd-server-command)))
-(if (not my:python-location)
-    (message
-     "Could not start YouCompleteMeDaemon because the python executable could
-not be found.\nSpecified executable is: '%s'\nPlease set my:ycmd-server-command
-appropriately in ~/.emacs.el.\n" (nth 0 my:ycmd-server-command)))
-(if (not (file-directory-p (nth 1 my:ycmd-server-command)))
-    (message "Could not YouCompleteMeDaemon because the specified directory does
-not exist.\nSpecified directory is: '%s'
-Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
-             (nth 1 my:ycmd-server-command)))
-(if (and my:python-location
-         (file-directory-p (nth 1 my:ycmd-server-command)))
-    (use-package ycmd
-      :ensure t
-      :init
-      (eval-when-compile
-        ;; Silence missing function warnings
-        (declare-function global-ycmd-mode "ycmd.el"))
-      (add-hook 'after-init-hook #'global-ycmd-mode)
-      :config
-      (progn
-        (set-variable 'ycmd-server-command my:ycmd-server-command)
-        (set-variable 'ycmd-extra-conf-whitelist my:ycmd-extra-conf-whitelist)
-        (set-variable 'ycmd-global-config my:ycmd-global-config)
-        (setq ycmd-force-semantic-completion t)
-        (use-package company-ycmd
-          :ensure t
-          :init
-          (eval-when-compile
-            ;; Silence missing function warnings
-            (declare-function company-ycmd-setup "company-ycmd.el"))
-          :config
-          (company-ycmd-setup)
-          )
-
-        (use-package flycheck-ycmd
-          :ensure t
-          :init
-          (add-hook 'c-mode-common-hook 'flycheck-ycmd-setup)
-          )
-
-        ;; Add displaying the function arguments in mini buffer using El Doc
-        (require 'ycmd-eldoc)
-        (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)
-        )
-      )
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up code completion with company
@@ -802,33 +739,6 @@ Please set my:ycmd-server-command appropriately in ~/.emacs.el.\n"
          ("\\.html?\\'" . web-mode))
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ein - ipython notebooks in gui emacs
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Only launch if the executable exists.
-(if (and my:jupyter_location
-         my:jupyter_start_dir)
-    (use-package ein
-      :ensure t
-      :commands (ein:jupyter-server-start)
-      :defer 5
-      :config
-      (require 'ein)
-      (require 'ein-loaddefs)
-      (require 'ein-notebook)
-      (require 'ein-subpackages)
-      ;; when editing the emacs.el file, we do not want to start a new
-      ;; Jupyter server each time we save, so we only start a new Jupyter
-      ;; server if there currently isn't one running.
-      (defvar my-found-ein-server nil)
-      (dolist (my-current-process (process-list))
-        (when (string-match "EIN: Jupyter*" (process-name my-current-process))
-          (setq my-found-ein-server t))
-        )
-      (when (not my-found-ein-server)
-        (ein:jupyter-server-start my:jupyter_location my:jupyter_start_dir))
-      )
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autopair
