@@ -3,8 +3,8 @@ emacs configuration files
 
 ## Setup
 ### Dependencies 
-Emacs 25 or newer
-Ripgrep
+- Emacs 25 or newer
+- Ripgrep
  ```
  sudo dnf install ripgrep
  ```
