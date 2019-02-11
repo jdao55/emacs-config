@@ -615,35 +615,65 @@
 ;; Enable hide/show of code blocks
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Set up code completion with company
+;; Set up lsp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package company
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :config
+  (require 'lsp-mode)
+  (require 'lsp-clients)
+  (add-hook 'rust-mode-hook #'lsp-rust-enable)
+  (add-hook 'c++-mode-hook #'lsp)
+  (add-hook 'c-mode-hook #'lsp)
+  (add-hook 'rust-mode-hook #'flycheck-mode)
+  (add-hook 'go-mode-hook #'lsp)
+  (add-hook 'sh-mode-hook #'lsp)
+  )
+(use-package company-lsp
   :ensure t
   :config
-  ;; Zero delay when pressing tab
-  (setq company-idle-delay 0)
-  (add-hook 'after-init-hook 'global-company-mode)
-  ;; remove unused backends
-  (setq company-backends (delete 'company-semantic company-backends))
-  (setq company-backends (delete 'company-eclim company-backends))
-  (setq company-backends (delete 'company-xcode company-backends))
-  (setq company-backends (delete 'company-clang company-backends))
-  (setq company-backends (delete 'company-bbdb company-backends))
-  (setq company-backends (delete 'company-oddmuse company-backends))
-  )
+  (require 'company-lsp)
+  (push 'company-lsp company-backends)
+  (add-hook 'after-init-hook 'global-company-mode))
 
-;; Setup loading company-jedi for python completion
-;; This requines running jedi:install-server the first time
-(use-package company-jedi
+(use-package lsp-ui
   :ensure t
-  :after python
-  :init
-  (defun my/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
-  (add-hook 'python-mode-hook 'my/python-mode-hook)
-  )
+  :config
+  (require 'lsp-ui))
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Set up code completion with company
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (use-package company
+;;   :ensure t
+;;   :config
+;;   ;; Zero delay when pressing tab
+;;   (setq company-idle-delay 0)
+;;   (add-hook 'after-init-hook 'global-company-mode)
+;;   ;; remove unused backends
+;;   (setq company-backends (delete 'company-semantic company-backends))
+;;   (setq company-backends (delete 'company-eclim company-backends))
+;;   (setq company-backends (delete 'company-xcode company-backends))
+;;   (setq company-backends (delete 'company-clang company-backends))
+;;   (setq company-backends (delete 'company-bbdb company-backends))
+;;   (setq company-backends (delete 'company-oddmuse company-backends))
+;;   )
+
+;; ;; Setup loading company-jedi for python completion
+;; ;; This requines running jedi:install-server the first time
+;; (use-package company-jedi
+;;   :ensure t
+;;   :after python
+;;   :init
+;;   (defun my/python-mode-hook ()
+;;     (add-to-list 'company-backends 'company-jedi))
+;;   (add-hook 'python-mode-hook 'my/python-mode-hook)
+;;   )
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configure flycheck
@@ -658,7 +688,7 @@
     (declare-function global-flycheck-mode "flycheck.el"))
   :config
   ;; Turn flycheck on everywhere
-  (global-flycheck-mode t)
+  ;;; (global-flycheck-mode t)
   ;; There are issues with company mode and flycheck in terminal mode.
   ;; This is outlined at:
   ;; https://github.com/abingham/emacs-ycmd
@@ -786,7 +816,7 @@
   (global-set-key (kbd "<f7>") 'flyspell-buffer)
   (global-set-key (kbd "<f9>") 'flyspell-correct-previous)
 
-  (add-hook 'text-mode-hook #'flyspell-mode)
+  ;;(add-hook 'text-mode-hook #'flyspell-mode)
   (add-hook 'prog-mode-hook #'flyspell-prog-mode)
   (add-hook 'org-mode-hook #'flyspell-mode)
   )
@@ -1248,7 +1278,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (lsp-rust markdown-preview-mode lsp-clangd ccls company-lsp lsp-go lsp-java lsp-python lsp-ruby lsp-ui lsp-mode ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
