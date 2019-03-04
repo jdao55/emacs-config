@@ -59,7 +59,7 @@
 (setq-default case-fold-search t ;case insensitive searches by default
               search-highlight t) ;hilit matches when searching
 ;; Highlight the line we are currently on
-(global-hl-line-mode t)
+;;(global-hl-line-mode t)
 ;; Disable the toolbar at the top since it's useless
 (if (functionp 'tool-bar-mode) (tool-bar-mode -1))
 
@@ -1008,7 +1008,7 @@
 ;; the font color under Menu Bar->Options->Appearance->Font For...
 ;; and then setting "Adopt Face and Frame Parameter as Frame Default"
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'atom-one-dark t)
+(load-theme 'firebelly t)
 ;; The minibuffer default colors with my theme are impossible to read, so change
 ;; them to something better using ivy-minibuffer-match-face.
 (custom-set-faces
@@ -1245,7 +1245,7 @@
  '(cua-read-only-cursor-color "#859900")
  '(custom-safe-themes
    (quote
-    ("84c45940066499ddd3699a1d66cb85c111a56359f33fcb0aeea31ea7b942eddd" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "2b7242a74c59605fbf9b8d35a3f49883a9fa44aabd0c6cb2455862d88b3867aa" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
+    ("12dd37432bb454355047c967db886769a6c60e638839405dad603176e2da366b" "84c45940066499ddd3699a1d66cb85c111a56359f33fcb0aeea31ea7b942eddd" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "2b7242a74c59605fbf9b8d35a3f49883a9fa44aabd0c6cb2455862d88b3867aa" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
  '(fci-rule-color "#073642")
  '(git-gutter:update-interval 5)
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
