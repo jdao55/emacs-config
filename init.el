@@ -9,7 +9,7 @@
 ;; up packages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Compilation command for C/C++
+;; Cnompilation command for C/C++
 (defvar my:compile-command "g++ -Wall -Wextra -O3 -march=native -std=c++2a ")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -618,30 +618,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up lsp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package lsp-mode
-  :ensure t
   :commands lsp
-  :config
-  (require 'lsp-mode)
-  (require 'lsp-clients)
-  (add-hook 'rust-mode-hook #'lsp-rust-enable)
-  (add-hook 'c++-mode-hook #'lsp)
-  (add-hook 'c-mode-hook #'lsp)
-  (add-hook 'rust-mode-hook #'flycheck-mode)
-  (add-hook 'go-mode-hook #'lsp)
-  (add-hook 'sh-mode-hook #'lsp)
+  :init
   )
+
+(use-package lsp-ui :commands lsp-ui-mode)
 (use-package company-lsp
-  :ensure t
+  :commands company-lsp
   :config
-  (require 'company-lsp)
   (push 'company-lsp company-backends)
   (add-hook 'after-init-hook 'global-company-mode))
 
-(use-package lsp-ui
-  :ensure t
-  :config
-  (require 'lsp-ui))
+(add-hook 'rust-mode-hook #'lsp)
+(add-hook 'c++-mode-hook #'lsp)
+(add-hook 'c-mode-hook #'lsp)
+(add-hook 'go-mode-hook #'lsp)
+(add-hook 'sh-mode-hook #'lsp)
+(add-hook 'python-mode-hook #'lsp)
+(add-hook 'prog-mode-hook #'lsp)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -652,28 +648,7 @@
   :config
   ;; Zero delay when pressing tab
   (setq company-idle-delay 0)
-  (add-hook 'after-init-hook 'global-company-mode)
-  ;; remove unused backends
-  ;; (setq company-backends (delete 'company-semantic company-backends))
-  ;; (setq company-backends (delete 'company-eclim company-backends))
-  ;; (setq company-backends (delete 'company-xcode company-backends))
-  ;; (setq company-backends (delete 'company-clang company-backends))
-  ;; (setq company-backends (delete 'company-bbdb company-backends))
-  ;; (setq company-backends (delete 'company-oddmuse company-backends))
-  )
-
-;; ;; Setup loading company-jedi for python completion
-;; ;; This requines running jedi:install-server the first time
-;; (use-package company-jedi
-;;   :ensure t
-;;   :after python
-;;   :init
-;;   (defun my/python-mode-hook ()
-;;     (add-to-list 'company-backends 'company-jedi))
-;;   (add-hook 'python-mode-hook 'my/python-mode-hook)
-;;   )
-
-
+  (add-hook 'after-init-hook 'global-company-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configure flycheck
@@ -1008,7 +983,7 @@
 ;; the font color under Menu Bar->Options->Appearance->Font For...
 ;; and then setting "Adopt Face and Frame Parameter as Frame Default"
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'firebelly t)
+(load-theme 'spacemacs-dark t)
 ;; The minibuffer default colors with my theme are impossible to read, so change
 ;; them to something better using ivy-minibuffer-match-face.
 (custom-set-faces
@@ -1165,7 +1140,7 @@
                     ;; Also handle undocumented (<active> <inactive>) form.
                     ((numberp (cadr alpha)) (cadr alpha)))
               100)
-         '(85 . 85) '(100 . 100)))))
+         '(92 . 92) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1245,7 +1220,7 @@
  '(cua-read-only-cursor-color "#859900")
  '(custom-safe-themes
    (quote
-    ("12dd37432bb454355047c967db886769a6c60e638839405dad603176e2da366b" "84c45940066499ddd3699a1d66cb85c111a56359f33fcb0aeea31ea7b942eddd" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "2b7242a74c59605fbf9b8d35a3f49883a9fa44aabd0c6cb2455862d88b3867aa" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
+    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "5206fcf9051aca0d9d7c1cd8090b81bde360d02fca1df8f70ea928c3f8b46e98" "9bb7de0ebf8d2e22ee826a46392e43c6482a5129ed79d9e17f98518e595ee342" "59cee06ea9e314bab76d157543983289db19c86b184067cb9d480f12c1dc08aa" "75025e40ad9b3f04eb53f3a8194c64bd87bf04547371701348ee90b84b72d426" "9144a95313a9a549de40ea790e133f6983ed54f44dc0b5a10d42e9ddc8b2ef09" "3b60f7a84fc051607d6cd700df666af2879cca8cb1e94f4f153767a530b51bef" "ea8df962aa72507a10af28ff31698d024e02050c29b7730bf18a00ccfc1c6d4f" "77ac629ffbf6efdf2f51c9fe013d4963e33926d71f3d89ad08d5ba1109963fab" "a34017c980a193321cfe712c35db97605a78f49b1501988d07e0c872a68dfb2d" "452b7148c1353f5c8a4c240472c8bff1e963d2dd686a4f11fb21ef5833adfb28" "ca711553341f717c3a34baf1da75751ec110fbdd21a2a0c8f3cab19e4d39e9f8" "3ed53eb5e9222e30082dc175860c6e9f9cd99793752a784ec3889cab727d4c08" "e4807f317cf9fd34eb9a7893aaf89419580b16faf27becd32a358ee9eee584c4" "58fc65348548099524342cfd2ee4b3a582db34fa3b7626c4d3a3d59111ae8ff4" "ac9bd6d2372fb00edcd3dab075c1519e029bd575f2594b03a9ba2240e6e44d78" "bf09d490502356e9b0284e86cb68e6d1b555742b6c6d88f57432345a917a6d26" "8928151cab1c1f8b2089113a4389ad1fb2ee0ac136839b38856a3f444e50efc1" "417e48adaf5c56a5ebb030847ded548ae7d9d52c02fbcd0d1202f0794cae6e55" "1e278d5437b258b6c366b561483212ebfe859831b1ac32741ee2eaf9f6f8ece2" "cab3bc408af4975fafe61fe27ff530befb77329a3bed27faebac0668e753b0f2" "19da25d924e68639c30c39d5fb18cdc885069cdbdc4dd41d017555af0e7d02ad" "12dd37432bb454355047c967db886769a6c60e638839405dad603176e2da366b" "84c45940066499ddd3699a1d66cb85c111a56359f33fcb0aeea31ea7b942eddd" "ae31831917d4bc2975f8f8e3a4dcbb9c4965fccc9d7da311a27ad5f993bc71a0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "2b7242a74c59605fbf9b8d35a3f49883a9fa44aabd0c6cb2455862d88b3867aa" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
  '(fci-rule-color "#073642")
  '(git-gutter:update-interval 5)
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
@@ -1278,7 +1253,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (lsp-rust markdown-preview-mode lsp-clangd ccls company-lsp lsp-go lsp-java lsp-python lsp-ruby lsp-ui lsp-mode ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (spacemacs-theme markdown-preview-mode ccls company-lsp lsp-java lsp-ui lsp-mode ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
