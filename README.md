@@ -3,11 +3,13 @@ emacs configuration files
 
 ## Setup
 ### Dependencies 
-- Emacs 25 or newer
 - Ripgrep
- ```
- sudo dnf install ripgrep
- ```
+- ccls
+- clangd
+- rls
+- gopls
+- python-language-server
+
 ...
 ### Installation
 * Remove init.el, init.elc, emacs.el from your ~/ and ~/.emacs.d directories
