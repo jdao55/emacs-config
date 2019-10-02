@@ -18,8 +18,14 @@
 (require 'package)
 
 ;adding melpa repository
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;bug fix for emacs 26.2
+;; TODO remove on 26.3:::::::::::::::::::::::::::::::::::
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -631,13 +637,14 @@
   (push 'company-lsp company-backends)
   (add-hook 'after-init-hook 'global-company-mode))
 
-(add-hook 'rust-mode-hook #'lsp)
+;(add-hook 'rust-mode-hook #'lsp)
 ;; (add-hook 'c++-mode-hook #'lsp)
 ;; (add-hook 'c-mode-hook #'lsp)
 (add-hook 'go-mode-hook #'lsp)
 (add-hook 'sh-mode-hook #'lsp)
 (add-hook 'python-mode-hook #'lsp)
 (add-hook 'prog-mode-hook #'lsp)
+(add-hook 'ruby-mode-hook #'lsp)
 (use-package ccls
   :ensure t
   :config
@@ -902,27 +909,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package yasnippet
   :ensure t
-  :commands (yas-reload-all)
   :init
   (eval-when-compile
     ;; Silence missing function warnings
     (declare-function yas-global-mode "yasnippet.el"))
   :defer 5
   :config
-  (yas-global-mode t)
-  (yas-reload-all))
-(use-package yasnippet-snippets
-  :ensure t
-  :after yasnippet
-  :config
-  (yas-reload-all))
-;; Apparently the company-yasnippet backend shadows all backends that
-;; come after it. To work around this we assign yasnippet to a different
-;; keybind since actual source completion is vital.
-(use-package company-yasnippet
-  :bind ("C-M-y" . company-yasnippet)
-  :after (yasnippet)
-  )
+  (yas-global-mode t))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load asm-mode when opening assembly files
@@ -1261,7 +1256,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (rainbow-mode spacemacs-theme markdown-preview-mode ccls company-lsp lsp-java lsp-ui lsp-mode ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yasnippet-snippets yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package treemacs string-inflection sourcerer-theme solarized-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters projectile powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
