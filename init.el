@@ -1,6 +1,5 @@
-;;; init file --- Summary:
-;;; Commentary:
-;; Emacs 25.1 and newer tested
+;;; init file
+
 ;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -103,8 +102,6 @@
 (global-set-key (kbd "C-m") 'newline-and-indent)
 ;; Load the compile ocmmand
 (global-set-key (kbd "C-c C-c") 'compile)
-;; Undo, basically C-x u
-(global-set-key (kbd "C-/") 'undo)
 ;; Find file in project
 (global-set-key (kbd "C-x M-f") 'project-find-file)
 
@@ -117,7 +114,7 @@
 ;; terminal
 (when (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode))
   (menu-bar-mode -1))
-(toggle-scroll-bar -1)
+
 
 ;; Don't ring the bell
 (setq ring-bell-function 'ignore)
@@ -637,7 +634,7 @@
   (push 'company-lsp company-backends)
   (add-hook 'after-init-hook 'global-company-mode))
 
-;(add-hook 'rust-mode-hook #'lsp)
+(add-hook 'rust-mode-hook #'lsp)
 ;; (add-hook 'c++-mode-hook #'lsp)
 ;; (add-hook 'c-mode-hook #'lsp)
 (add-hook 'go-mode-hook #'lsp)
@@ -988,60 +985,55 @@
 ;; the font color under Menu Bar->Options->Appearance->Font For...
 ;; and then setting "Adopt Face and Frame Parameter as Frame Default"
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'firebelly t)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/spacemacs-theme/")
+(load-file '"~/.emacs.d/themes/spacemacs-theme/spacemacs-common.el")
+(load-theme 'spacemacs-dark t)
 ;; The minibuffer default colors with my theme are impossible to read, so change
 ;; them to something better using ivy-minibuffer-match-face.
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((((type tty) (background dark)) (:background "nil"))))
- '(company-preview ((t (:background "#073642" :foreground "#2aa198"))))
- '(company-preview-common ((t (:foreground "#93a1a1" :underline t))))
- '(company-scrollbar-bg ((t (:background "#073642" :foreground "#2aa198"))))
- '(company-scrollbar-fg ((t (:foreground "#002b36" :background "#839496"))))
- '(company-template-field ((t (:background "#7B6000" :foreground "#073642"))))
- '(company-tooltip ((t (:background "black" :foreground "DeepSkyBlue1"))))
- '(company-tooltip-annotation ((t (:foreground "#93a1a1" :background "#073642"))))
- '(company-tooltip-common ((t (:foreground "#93a1a1" :underline t))))
- '(company-tooltip-common-selection ((t (:foreground "#93a1a1" :underline t))))
- '(company-tooltip-mouse ((t (:background "DodgerBlue4" :foreground "CadetBlue1"))))
- '(company-tooltip-selection ((t (:background "DodgerBlue4" :foreground "CadetBlue1"))))
- '(header-line ((t (:background "#003366"))))
- '(ivy-minibuffer-match-face-1 ((((class color) (background light)) (:background "#555555")) (((class color) (background dark)) (:background "#555555"))))
- '(ivy-minibuffer-match-face-2 ((t (:background "#314f30" :weight bold))))
- '(ivy-minibuffer-match-face-3 ((t (:background "#48225b" :weight bold))))
- '(ivy-minibuffer-match-face-4 ((t (:background "#680a0a" :weight bold))))
- '(which-func ((t (:foreground "#8fb28f")))))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(default ((((type tty) (background dark)) (:background "nil"))))
+;;  '(company-preview ((t (:background "#073642" :foreground "#2aa198"))))
+;;  '(company-preview-common ((t (:foreground "#93a1a1" :underline t))))
+;;  '(company-scrollbar-bg ((t (:background "#073642" :foreground "#2aa198"))))
+;;  '(company-scrollbar-fg ((t (:foreground "#002b36" :background "#839496"))))
+;;  '(company-template-field ((t (:background "#7B6000" :foreground "#073642"))))
+;;  '(company-tooltip ((t (:background "black" :foreground "DeepSkyBlue1"))))
+;;  '(company-tooltip-annotation ((t (:foreground "#93a1a1" :background "#073642"))))
+;;  '(company-tooltip-common ((t (:foreground "#93a1a1" :underline t))))
+;;  '(company-tooltip-common-selection ((t (:foreground "#93a1a1" :underline t))))
+;;  '(company-tooltip-mouse ((t (:background "DodgerBlue4" :foreground "CadetBlue1"))))
+;;  '(company-tooltip-selection ((t (:background "DodgerBlue4" :foreground "CadetBlue1"))))
+;;  '(header-line ((t (:background "#003366"))))
+;;  '(ivy-minibuffer-match-face-1 ((((class color) (background light)) (:background "#555555")) (((class color) (background dark)) (:background "#555555"))))
+;;  '(ivy-minibuffer-match-face-2 ((t (:background "#314f30" :weight bold))))
+;;  '(ivy-minibuffer-match-face-3 ((t (:background "#48225b" :weight bold))))
+;;  '(ivy-minibuffer-match-face-4 ((t (:background "#680a0a" :weight bold))))
+;;  '(which-func ((t (:foreground "#8fb28f")))))
 
 ;; I don't care to see the splash screen
 (setq inhibit-splash-screen t)
 (setq-default tab-width 4)
+
 ;; Hide the scroll bar
+(toggle-scroll-bar -1)
 (defvar my-font-size 90)
+
 ;; Make mode bar small
 (set-face-attribute 'mode-line nil  :height my-font-size)
+
 ;; Set the header bar font
 (set-face-attribute 'header-line nil  :height my-font-size)
-;; Set default window size and position
-(setq default-frame-alist
-      '((top . 0) (left . 0) ;; position
-        (width . 110) (height . 90) ;; size
-        ))
+
 ;; Enable line numbers on the LHS
-(when (display-graphic-p)
-  ;; Always visit images as images.
-  (auto-image-file-mode)
-  ;; If we're on Emacs 26 or better...
-  (if (> emacs-major-version 25)
-      ;; ...only show line numbers in certain types of modes.
-      (progn
-        (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
-        (add-hook 'text-mode-hook (lambda () (display-line-numbers-mode 1))))
-    ;; ...otherwise use linum-mode.
-(global-linum-mode 1)))
+(global-display-line-numbers-mode 1)
+
+
 ;; Set the font to size 9 (90/10).
+
 (set-face-attribute 'default nil :height my-font-size)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1049,89 +1041,6 @@
 ;; path and the function we're in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (which-function-mode t)
-
-;; Remove function from mode bar
-(setq mode-line-misc-info
-      (delete (assoc 'which-func-mode
-                     mode-line-misc-info) mode-line-misc-info))
-
-
-(defmacro with-face
-    (str &rest properties)
-  `(propertize ,str 'face (list ,@properties)))
-
-(defun sl/make-header ()
-  "."
-  (let* ((sl/full-header (abbreviate-file-name buffer-file-name))
-         (sl/header (file-name-directory sl/full-header))
-         (sl/drop-str "[...]")
-         )
-    (if (> (length sl/full-header)
-           (window-body-width))
-        (if (> (length sl/header)
-               (window-body-width))
-            (progn
-              (concat (with-face sl/drop-str
-                                 :background "blue"
-                                 :weight 'bold
-                                 )
-                      (with-face (substring sl/header
-                                            (+ (- (length sl/header)
-                                                  (window-body-width))
-                                               (length sl/drop-str))
-                                            (length sl/header))
-                                 ;; :background "red"
-                                 :weight 'bold
-                                 )))
-          (concat
-           (with-face sl/header
-                      ;; :background "red"
-                      :foreground "red"
-                      :weight 'bold)))
-      (concat (if window-system ;; In the terminal the green is hard to read
-                  (with-face sl/header
-                             ;; :background "green"
-                             ;; :foreground "black"
-                             :weight 'bold
-                             :foreground "#8fb28f"
-                             )
-                (with-face sl/header
-                           ;; :background "green"
-                           ;; :foreground "black"
-                           :weight 'bold
-                           :foreground "blue"
-                           ))
-              (with-face (file-name-nondirectory buffer-file-name)
-                         :weight 'bold
-                         ;; :background "red"
-                         )))))
-
-(defun sl/display-header ()
-  "Create the header string and display it."
-  ;; The dark blue in the header for which-func is terrible to read.
-  ;; However, in the terminal it's quite nice
-  (if window-system
-      (custom-set-faces
-       '(which-func ((t (:foreground "#8fb28f")))))
-    (custom-set-faces
-     '(which-func ((t (:foreground "blue"))))))
-  ;; Set the header line
-  (setq header-line-format
-
-        (list "-"
-              '(which-func-mode ("" which-func-format))
-              '("" ;; invocation-name
-                (:eval (if (buffer-file-name)
-                           (concat "[" (sl/make-header) "]")
-                         "[%b]")))
-              )
-        )
-  )
-;; Call the header line update
-(add-hook 'buffer-list-update-hook
-          'sl/display-header)
-
-
 
 ;;toggle transparentcy
 (defun toggle-transparency ()
@@ -1258,7 +1167,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
@@ -1294,3 +1203,9 @@
    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
  '(xterm-color-names-bright
    ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
