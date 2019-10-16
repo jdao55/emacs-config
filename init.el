@@ -271,16 +271,99 @@
     )
   )
 ;;all the icons
-(use-package all-the-icons)
+;; (use-package all-the-icons)
 
-;;put neo tree here
-(use-package neotree
+;; ;;put neo tree here
+;; (use-package neotree
+;;   :ensure t
+;;   :bind (("<f8>" . neotree-toggle)
+;;          )
+;;   :config
+;;   (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+;;   (setq neo-show-hidden-files t))
+
+
+;; Treemacs config
+(use-package treemacs
   :ensure t
-  :bind (("<f8>" . neotree-toggle)
-         )
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
   :config
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-  (setq neo-show-hidden-files t))
+  (progn
+    (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-display-in-side-window        t
+          treemacs-eldoc-display                 t
+          treemacs-file-event-delay              5000
+          treemacs-file-follow-delay             0.2
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-position                      'left
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-desc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-width                         35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-resize-icons 16)
+    (treemacs-fringe-indicator-mode t)
+    (case (cons (not (null (executable-find "git")))
+                 (not (null treemacs-python-executable)))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
+;; (use-package lsp-treemacs
+;;   :ensure t)
+
 
 
 ;; Use universal ctags to build the tags database for the project.
@@ -988,31 +1071,7 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/spacemacs-theme/")
 (load-file '"~/.emacs.d/themes/spacemacs-theme/spacemacs-common.el")
 (load-theme 'spacemacs-dark t)
-;; The minibuffer default colors with my theme are impossible to read, so change
-;; them to something better using ivy-minibuffer-match-face.
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(default ((((type tty) (background dark)) (:background "nil"))))
-;;  '(company-preview ((t (:background "#073642" :foreground "#2aa198"))))
-;;  '(company-preview-common ((t (:foreground "#93a1a1" :underline t))))
-;;  '(company-scrollbar-bg ((t (:background "#073642" :foreground "#2aa198"))))
-;;  '(company-scrollbar-fg ((t (:foreground "#002b36" :background "#839496"))))
-;;  '(company-template-field ((t (:background "#7B6000" :foreground "#073642"))))
-;;  '(company-tooltip ((t (:background "black" :foreground "DeepSkyBlue1"))))
-;;  '(company-tooltip-annotation ((t (:foreground "#93a1a1" :background "#073642"))))
-;;  '(company-tooltip-common ((t (:foreground "#93a1a1" :underline t))))
-;;  '(company-tooltip-common-selection ((t (:foreground "#93a1a1" :underline t))))
-;;  '(company-tooltip-mouse ((t (:background "DodgerBlue4" :foreground "CadetBlue1"))))
-;;  '(company-tooltip-selection ((t (:background "DodgerBlue4" :foreground "CadetBlue1"))))
-;;  '(header-line ((t (:background "#003366"))))
-;;  '(ivy-minibuffer-match-face-1 ((((class color) (background light)) (:background "#555555")) (((class color) (background dark)) (:background "#555555"))))
-;;  '(ivy-minibuffer-match-face-2 ((t (:background "#314f30" :weight bold))))
-;;  '(ivy-minibuffer-match-face-3 ((t (:background "#48225b" :weight bold))))
-;;  '(ivy-minibuffer-match-face-4 ((t (:background "#680a0a" :weight bold))))
-;;  '(which-func ((t (:foreground "#8fb28f")))))
+
 
 ;; I don't care to see the splash screen
 (setq inhibit-splash-screen t)
@@ -1029,7 +1088,8 @@
 (set-face-attribute 'header-line nil  :height my-font-size)
 
 ;; Enable line numbers on the LHS
-(global-display-line-numbers-mode 1)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
 
 
 ;; Set the font to size 9 (90/10).
@@ -1094,17 +1154,17 @@
                                           (powerline-raw ":" face1)
                                           (powerline-raw "%3c" face1 'r)
                                           (funcall separator-right face1 face0)
-                                          (powerline-raw " ")
+                                          (powerline-raw "")
                                           (powerline-raw "%6p" face0 'r)
                                           (powerline-hud face2 face1)
                                           ))
-                            (rhs (list (powerline-raw " " face1)
+                            (rhs (list (powerline-raw "" face1)
                                        (funcall separator-left face1 face2)
                                        (when (and (boundp 'erc-track-minor-mode) erc-track-minor-mode)
                                          (powerline-raw erc-modified-channels-object face2 'l))
                                        (powerline-major-mode face2 'l)
                                        (powerline-process face2)
-                                       (powerline-raw " :" face2)
+                                       (powerline-raw " ||" face2)
                                        (powerline-minor-modes face2 'l)
                                        (powerline-raw " " face2)
                                        (funcall separator-right face2 face1)
@@ -1113,7 +1173,7 @@
                        (concat (powerline-render lhs)
                                (powerline-fill-center face1 (/ (powerline-width center) 2.0))
                                (powerline-render center)
-                               (powerline-fill face1 (powerline-width rhs))
+                               (powerline-fill face1 (+ (powerline-width rhs) 2))
                                (powerline-render rhs)))))))
   (powerline-right-theme)
   )
@@ -1161,13 +1221,31 @@
    (quote
     ("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
  '(hl-paren-colors (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
+ '(hl-todo-keyword-faces
+   (quote
+    (("TODO" . "#dc752f")
+     ("NEXT" . "#dc752f")
+     ("THEM" . "#2d9574")
+     ("PROG" . "#4f97d7")
+     ("OKAY" . "#4f97d7")
+     ("DONT" . "#f2241f")
+     ("FAIL" . "#f2241f")
+     ("DONE" . "#86dc2f")
+     ("NOTE" . "#b1951d")
+     ("KLUDGE" . "#b1951d")
+     ("HACK" . "#b1951d")
+     ("TEMP" . "#b1951d")
+     ("FIXME" . "#dc752f")
+     ("XXX+" . "#dc752f")
+     ("\\?\\?\\?+" . "#dc752f"))))
  '(magit-diff-use-overlays nil)
  '(nrepl-message-colors
    (quote
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+ '(pdf-view-midnight-colors (quote ("#c4c4c4" . "#292b2e")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
