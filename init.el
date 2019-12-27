@@ -21,10 +21,6 @@
 (package-initialize)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;bug fix for emacs 26.2
-;; TODO remove on 26.3:::::::::::::::::::::::::::::::::::
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1079,7 +1075,7 @@
 
 ;; Hide the scroll bar
 (toggle-scroll-bar -1)
-(defvar my-font-size 90)
+(defvar my-font-size 100)
 
 ;; Make mode bar small
 (set-face-attribute 'mode-line nil  :height my-font-size)
