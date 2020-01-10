@@ -7,7 +7,7 @@ emacs configuration files, used emacs-lsp for ide like expereince in emacs
 
 
 ### Installation
-* Remove init.el, init.elc, emacs.el from your ~/ and ~/.emacs.d directories
+* Remove init.el, init.elc, emacs.el from your ```~/``` and ```~/.emacs.d``` directories
 * Clone this repo your .emacs.d directory
 * On next lauch of emacs, packages needed from melpa will be installed
 * Restart emacs
