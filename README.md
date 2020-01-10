@@ -5,7 +5,7 @@ emacs configuration files, used emacs-lsp for ide like expereince in emacs
 ### Dependencies 
 - langauge servers for each language must be installed, for usage with emacs-lsp
 
-...
+
 ### Installation
 * Remove init.el, init.elc, emacs.el from your ~/ and ~/.emacs.d directories
 * Clone this repo your .emacs.d directory
