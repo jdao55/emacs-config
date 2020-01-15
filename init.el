@@ -8,9 +8,6 @@
 ;; up packages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Cnompilation command for C/C++
-(defvar my:compile-command "g++ -Wall -Wextra -O3 -march=native -std=c++2a ")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set packages to install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -34,13 +31,6 @@
 
 ;; Extra plugins and config files are stored here
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Start emacs server if not already running
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(if (and (fboundp 'server-running-p)
-         (not (server-running-p)))
-    (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Tweaks
@@ -96,8 +86,6 @@
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 ;; Indent after a newline, if required by syntax of language
 (global-set-key (kbd "C-m") 'newline-and-indent)
-;; Load the compile ocmmand
-(global-set-key (kbd "C-c C-c") 'compile)
 ;; Find file in project
 (global-set-key (kbd "C-x M-f") 'project-find-file)
 
@@ -108,8 +96,7 @@
 
 ;; Disable the menu bar since we don't use it, especially not in the
 ;; terminal
-(when (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode))
-  (menu-bar-mode -1))
+(menu-bar-mode -1)
 
 
 ;; Don't ring the bell
@@ -148,42 +135,6 @@
 ;; so we can (require 'use-package) even in compiled emacs to e.g. read docs
 (use-package use-package
   :commands use-package-autoload-keymap)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Enable terminal emacs to copy and paste from system clipboard
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Note: this uses C-c before the usual C-w, M-w, and C-y
-;; From: https://stackoverflow.com/questions/64360/how-to-copy-text-from-emacs-to-another-application-on-linux
-(defun my-copy-to-xclipboard(arg)
-  (interactive "P")
-  (cond
-   ((not (use-region-p))
-    (message "Nothing to yank to X-clipboard"))
-   ((and (not (display-graphic-p))
-         (/= 0 (shell-command-on-region
-                (region-beginning) (region-end) "xsel -i -b")))
-    (message "Error: Is program `xsel' installed?"))
-   (t
-    (when (display-graphic-p)
-      (call-interactively 'clipboard-kill-ring-save))
-    (message "Yanked region to X-clipboard")
-    (when arg
-      (kill-region  (region-beginning) (region-end)))
-    (deactivate-mark))))
-
-(defun my-cut-to-xclipboard()
-  (interactive)
-  (my-copy-to-xclipboard t))
-
-(defun my-paste-from-xclipboard()
-  (interactive)
-  (if (display-graphic-p)
-      (clipboard-yank)
-    (insert (shell-command-to-string "xsel -o -b"))))
-
-(global-set-key (kbd "C-c C-w") 'my-cut-to-xclipboard)
-(global-set-key (kbd "C-c M-w") 'my-copy-to-xclipboard)
-(global-set-key (kbd "C-c C-y") 'my-paste-from-xclipboard)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; async - library for async/thread processing
@@ -362,99 +313,6 @@
 
 
 
-;; Use universal ctags to build the tags database for the project.
-;; When you first want to build a TAGS database run 'touch TAGS'
-;; in the root directory of your project.
-(use-package counsel-etags
-  :ensure t
-  :init
-  (eval-when-compile
-    ;; Silence missing function warnings
-    (declare-function counsel-etags-virtual-update-tags "counsel-etags.el")
-    (declare-function counsel-etags-guess-program "counsel-etags.el")
-    (declare-function counsel-etags-locate-tags-file "counsel-etags.el"))
-  :bind (
-         ("M-." . counsel-etags-find-tag-at-point)
-         ("M-t" . counsel-etags-grep-symbol-at-point)
-         ("M-s" . counsel-etags-find-tag)
-         ("M-*" . counsel-etags-recent-tag))
-  :config
-  ;; Ignore files above 800kb
-  (setq counsel-etags-max-file-size 800)
-  ;; Ignore build directories for tagging
-  (add-to-list 'counsel-etags-ignore-directories '"build*")
-  (add-to-list 'counsel-etags-ignore-directories '".vscode")
-  (add-to-list 'counsel-etags-ignore-filenames '".clang-format")
-  ;; Don't ask before rereading the TAGS files if they have changed
-  (setq tags-revert-without-query t)
-  ;; Don't warn when TAGS files are large
-  (setq large-file-warning-threshold nil)
-  ;; How many seconds to wait before rerunning tags for auto-update
-  (setq counsel-etags-update-interval 180)
-  ;; Set up auto-update
-  (add-hook
-   'prog-mode-hook
-   (lambda () (add-hook 'after-save-hook
-                        (lambda ()
-                          (counsel-etags-virtual-update-tags))))
-   )
-
-  ;; The function provided by counsel-etags is broken (at least on Linux)
-  ;; and doesn't correctly exclude directories, leading to an excessive
-  ;; amount of incorrect tags. The issue seems to be that the trailing '/'
-  ;; in e.g. '*dirname/*' causes 'find' to not correctly exclude all files
-  ;; in that directory, only files in sub-directories of the dir set to be
-  ;; ignore.
-  (defun my-scan-dir (src-dir &optional force)
-    "Create tags file from SRC-DIR. \
-     If FORCE is t, the commmand is executed without \
-     checking the timer."
-    (let* ((find-pg (or
-                     counsel-etags-find-program
-                     (counsel-etags-guess-program "find")))
-           (ctags-pg (or
-                      counsel-etags-tags-program
-                      (format "%s -e -L" (counsel-etags-guess-program
-                                          "ctags"))))
-           (default-directory src-dir)
-           ;; run find&ctags to create TAGS
-           (cmd (format
-                 "%s . \\( %s \\) -prune -o -type f -not -size +%sk %s | %s -"
-                 find-pg
-                 (mapconcat
-                  (lambda (p)
-                    (format "-iwholename \"*%s*\"" p))
-                  counsel-etags-ignore-directories " -or ")
-                 counsel-etags-max-file-size
-                 (mapconcat (lambda (n)
-                              (format "-not -name \"%s\"" n))
-                            counsel-etags-ignore-filenames " ")
-                 ctags-pg))
-           (tags-file (concat (file-name-as-directory src-dir) "TAGS"))
-           (doit (or force (not (file-exists-p tags-file)))))
-      ;; always update cli options
-      (when doit
-        (message "%s at %s" cmd default-directory)
-        (shell-command cmd)
-        (visit-tags-table tags-file t)
-        )
-      )
-    )
-
-  (setq counsel-etags-update-tags-backend
-        (lambda ()
-          (interactive)
-          (let* ((tags-file (counsel-etags-locate-tags-file)))
-            (when tags-file
-              (my-scan-dir (file-name-directory tags-file) t)
-              (run-hook-with-args
-               'counsel-etags-after-update-tags-hook tags-file)
-              (unless counsel-etags-quiet-when-updating-tags
-                (message "%s is updated!" tags-file))))
-          )
-        )
-  )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window numbering
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -480,25 +338,6 @@
 (use-package wgrep
   :ensure t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Edit server to allow editing of things in Chrome with Emacs
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package edit-server
-  :ensure t
-  :config
-  (progn
-    (eval-when-compile
-      ;; Silence missing function warnings
-      (declare-function edit-server-start "edit-server-start.el"))
-    (when (daemonp)
-      (edit-server-start)
-      )
-    (add-hook 'edit-server-start-hook
-              (lambda ()
-                (when (string-match "github.com" (buffer-name))
-                  (markdown-mode))))
-    )
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Origami - Does code folding, ie hide the body of an
@@ -654,12 +493,9 @@
   :config
   (define-key c++-mode-map (kbd "C-c C-c") 'compile)
   (define-key c++-mode-map (kbd "C-c C-k") 'kill-compilation)
-  (setq compile-command my:compile-command)
   (use-package google-c-style
     :ensure t
     :config
-    ;; This prevents the extra two spaces in a namespace that Emacs
-    ;; otherwise wants to put... Gawd!
     (add-hook 'c-mode-common-hook 'google-set-c-style)
     ;; Autoindent using google style guide
     (add-hook 'c-mode-common-hook 'google-make-newline-indent)
@@ -999,15 +835,6 @@
 (use-package asm-mode
              :mode ("\\.s\\'"))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Load go-mode when opening go files
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package go-mode
-  :mode ("\\.go\\'"))
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Use markdown-mode for markdown files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1082,10 +909,7 @@
 ;; Enable line numbers on the LHS
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
-
-
 ;; Set the font to size 9 (90/10).
-
 (set-face-attribute 'default nil :height my-font-size)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1237,7 +1061,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (cmake-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pdf-view-midnight-colors (quote ("#c4c4c4" . "#292b2e")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
