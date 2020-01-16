@@ -110,11 +110,6 @@
 ;; Dont ask to follow symlink in git
 (setq vc-follow-symlinks t)
 
-;; Check (on save) whether the file edited contains a shebang, if yes,
-;; make it executable from
-;; http://mbork.pl/2015-01-10_A_few_random_Emacs_tips
-(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-
 ;; Highlight some keywords in prog-mode
 (add-hook 'prog-mode-hook
           (lambda ()
@@ -308,10 +303,6 @@
 (use-package treemacs-magit
   :after treemacs magit
   :ensure t)
-;; (use-package lsp-treemacs
-;;   :ensure t)
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window numbering
@@ -548,25 +539,28 @@
   :config
   (push 'company-lsp company-backends)
   (add-hook 'after-init-hook 'global-company-mode))
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 (add-hook 'rust-mode-hook #'lsp)
-;; (add-hook 'c++-mode-hook #'lsp)
-;; (add-hook 'c-mode-hook #'lsp)
+(add-hook 'c++-mode-hook #'lsp)
+(add-hook 'c-mode-hook #'lsp)
 (add-hook 'go-mode-hook #'lsp)
 (add-hook 'sh-mode-hook #'lsp)
 (add-hook 'python-mode-hook #'lsp)
 (add-hook 'prog-mode-hook #'lsp)
 (add-hook 'ruby-mode-hook #'lsp)
-(use-package ccls
-  :ensure t
-  :config
-  (setq ccls-executable "ccls")
-  (setq lsp-prefer-flymake nil)
-  (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
-  :hook ((c-mode c++-mode objc-mode) .
-         (lambda () (require 'ccls) (lsp))))
-;fire watchers ignore ccls cache files
-(add-to-list 'lsp-file-watch-ignored '"[/\\\\]\\.ccls-cache$")
+;; (use-package ccls
+;;   :ensure t
+;;   :config
+;;   (setq ccls-executable "ccls")
+;;   (setq lsp-prefer-flymake nil)
+;;   (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
+;;   :hook ((c-mode c++-mode objc-mode) .
+;;          (lambda () (require 'ccls) (lsp))))
+
+;; ;: file watchers ignore ccls cache files
+;; (add-to-list 'lsp-file-watch-ignored '"[/\\\\]\\.ccls-cache$")
+;; (add-to-list 'lsp-file-watch-ignored '"[/\\\\]\\.*cache$")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -718,7 +712,8 @@
     (ispell-word))
 
   (global-set-key (kbd "<f7>") 'flyspell-buffer)
-  (global-set-key (kbd "<f9>") 'flyspell-correct-previous)
+  (global-set-key (kbd "<f8>") 'flyspell-correct-at-point)
+  (global-set-key (kbd "<f9>") 'flyspell-correct-next)
 
   ;;(add-hook 'text-mode-hook #'flyspell-mode)
   (add-hook 'prog-mode-hook #'flyspell-prog-mode)
@@ -1061,7 +1056,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (lsp-treemacs rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pdf-view-midnight-colors (quote ("#c4c4c4" . "#292b2e")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
