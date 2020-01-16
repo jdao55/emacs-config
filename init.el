@@ -477,21 +477,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C++ keys
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package cc-mode
-  :ensure t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
-  :config
-  (define-key c++-mode-map (kbd "C-c C-c") 'compile)
-  (define-key c++-mode-map (kbd "C-c C-k") 'kill-compilation)
-  (use-package google-c-style
-    :ensure t
-    :config
-    (add-hook 'c-mode-common-hook 'google-set-c-style)
-    ;; Autoindent using google style guide
-    (add-hook 'c-mode-common-hook 'google-make-newline-indent)
-    )
-  )
+;; (use-package cc-mode
+;;   :ensure t
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
+;;   :config
+;;   (use-package google-c-style
+;;     :ensure t
+;;     :config
+;;     (add-hook 'c-mode-common-hook 'google-set-c-style)
+;;     ;; Autoindent using google style guide
+;;     (add-hook 'c-mode-common-hook 'google-make-newline-indent)
+;;     )
+;;   )
 
 ;; Change tab key behavior to insert spaces instead
 
@@ -539,7 +537,7 @@
   :config
   (push 'company-lsp company-backends)
   (add-hook 'after-init-hook 'global-company-mode))
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 (add-hook 'rust-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
