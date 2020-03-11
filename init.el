@@ -713,7 +713,7 @@
   (global-set-key (kbd "<f8>") 'flyspell-correct-at-point)
   (global-set-key (kbd "<f9>") 'flyspell-correct-next)
 
-  ;;(add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook 'text-mode-hook #'flyspell-mode)
   (add-hook 'prog-mode-hook #'flyspell-prog-mode)
   (add-hook 'org-mode-hook #'flyspell-mode)
   )
