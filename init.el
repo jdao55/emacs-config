@@ -638,10 +638,10 @@
     (declare-function writegood-mode "writegood-mode.el"))
   (add-hook 'org-mode-hook #'writegood-mode)
   )
-;;agenda org mode
-(setq org-agenda-files(list "~/org/work.org"
-                            "~/org/school.org"
-                            "~/org/home.org"))
+;;agenda org mode TODO move directory locations
+;;(setq org-agenda-files(list "~/org/work.org"
+;;                            "~/org/school.org"
+;;                            "~/org/home.org"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
