@@ -1,4 +1,4 @@
-;;; init file
+;; init file
 
 ;;; Code:
 
@@ -525,11 +525,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up lsp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package lsp-mode
-  :commands lsp
-  :init
-  )
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  :init (setq lsp-keymap-prefix "s-l")
+
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (rust-mode . lsp)
+         (c++-mode . lsp)
+         (c-mode . lsp)
+         (go-mode . lsp)
+         (sh-mode . lsp)
+         (python-mode . lsp)
+         (prog-mode . lsp)
+         (ruby-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
 
 (use-package lsp-ui :commands lsp-ui-mode)
 (use-package company-lsp
@@ -537,16 +549,10 @@
   :config
   (push 'company-lsp company-backends)
   (add-hook 'after-init-hook 'global-company-mode))
+
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
-(add-hook 'rust-mode-hook #'lsp)
-(add-hook 'c++-mode-hook #'lsp)
-(add-hook 'c-mode-hook #'lsp)
-(add-hook 'go-mode-hook #'lsp)
-(add-hook 'sh-mode-hook #'lsp)
-(add-hook 'python-mode-hook #'lsp)
-(add-hook 'prog-mode-hook #'lsp)
-(add-hook 'ruby-mode-hook #'lsp)
 ;; (use-package ccls
 ;;   :ensure t
 ;;   :config
@@ -1048,6 +1054,7 @@
      ("FIXME" . "#dc752f")
      ("XXX+" . "#dc752f")
      ("\\?\\?\\?+" . "#dc752f"))))
+ '(lsp-rust-server (quote rust-analyzer))
  '(magit-diff-use-overlays nil)
  '(nrepl-message-colors
    (quote
