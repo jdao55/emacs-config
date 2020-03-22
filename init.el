@@ -24,10 +24,9 @@
 ;; By default Emacs triggers garbage collection at ~0.8MB which makes
 ;; startup really slow. Since most systems have at least 64MB of memory,
 ;; we increase it during initialization.
-(setq gc-cons-threshold 64000000)
-(add-hook 'after-init-hook #'(lambda ()
-                               ;; restore after startup
-                               (setq gc-cons-threshold 800000)))
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024))
+
 
 ;; Extra plugins and config files are stored here
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins"))
@@ -531,7 +530,7 @@
 
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
          (rust-mode . lsp)
-         (c++-mode . lsp)
+         (cpp-mode . lsp)
          (c-mode . lsp)
          (go-mode . lsp)
          (sh-mode . lsp)
@@ -562,7 +561,7 @@
 ;;   :hook ((c-mode c++-mode objc-mode) .
 ;;          (lambda () (require 'ccls) (lsp))))
 
-;; ;: file watchers ignore ccls cache files
+;; file watchers ignore ccls-cache files
 ;; (add-to-list 'lsp-file-watch-ignored '"[/\\\\]\\.ccls-cache$")
 ;; (add-to-list 'lsp-file-watch-ignored '"[/\\\\]\\.*cache$")
 
@@ -1061,7 +1060,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (lsp-treemacs rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode ccls company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (lsp-treemacs rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pdf-view-midnight-colors (quote ("#c4c4c4" . "#292b2e")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
