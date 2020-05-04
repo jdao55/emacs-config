@@ -523,6 +523,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up lsp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
 (use-package lsp-mode
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   :init (setq lsp-keymap-prefix "C-l")
@@ -531,7 +534,7 @@
          (rust-mode . lsp)
          (cpp-mode . lsp)
          (c-mode . lsp)
-         (go-mode . lsp)
+         (go-mode . lsp-go-install-save-hooks)
          (sh-mode . lsp)
          (python-mode . lsp)
          (prog-mode . lsp)
