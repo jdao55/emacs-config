@@ -3,7 +3,7 @@ emacs configuration files, uses emacs-lsp for ide like expereince in emacs
 
 ## Setup
 ### Dependencies 
-- langauge servers for each language must be installed, for usage with emacs-lsp
+- langauge servers for each language must be installed, for usage with [emacs-lsp](https://github.com/emacs-lsp/lsp-mode)
 
 
 ### Installation
