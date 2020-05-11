@@ -455,7 +455,7 @@
 ;; clang-format -style=google -dump-config > .clang-format
 (use-package clang-format
   :ensure t
-  :bind (("C-c C-f" . clang-format-region))
+  :bind (("C-c C-f" . clang-format-buffer))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
