@@ -461,16 +461,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modern C++ code highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package modern-cpp-font-lock
-  :ensure t
-  :init
-  (eval-when-compile
+;;(use-package modern-cpp-font-lock
+;;  :ensure t
+;;  :init
+;;  (eval-when-compile
       ;; Silence missing function warnings
-    (declare-function modern-c++-font-lock-global-mode
+;;    (declare-function modern-c++-font-lock-global-mode
                       "modern-cpp-font-lock.el"))
-  :config
-  (modern-c++-font-lock-global-mode t)
-  )
+;;  :config
+;;  (modern-c++-font-lock-global-mode t)
+;;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C++ keys
