@@ -467,7 +467,7 @@
 ;;  (eval-when-compile
       ;; Silence missing function warnings
 ;;    (declare-function modern-c++-font-lock-global-mode
-                      "modern-cpp-font-lock.el"))
+;;                      "modern-cpp-font-lock.el"))
 ;;  :config
 ;;  (modern-c++-font-lock-global-mode t)
 ;;  )
