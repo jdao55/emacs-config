@@ -159,6 +159,127 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; IRC config
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package erc
+  :delight "ε "
+  :preface
+  (defun my/erc-browse-last-url ()
+    "Searchs backwards through an ERC buffer, looking for a URL. When a URL is
+     found, it prompts you to open it."
+    (interactive)
+    (save-excursion
+      (let ((ffap-url-regexp "\\(https?://\\)."))
+        (ffap-next-url t t))))
+
+  (defun my/erc-count-users ()
+    "Displays the number of users and ops connected on the current channel."
+    (interactive)
+    (if (get-buffer "irc.freenode.net:6667")
+        (let ((channel (erc-default-target)))
+          (if (and channel (erc-channel-p channel))
+              (let ((hash-table (with-current-buffer (erc-server-buffer)
+                                  erc-server-users))
+                    (users 0)
+                    (ops 0))
+                (maphash (lambda (k v)
+                           (when (member (current-buffer)
+                                         (erc-server-user-buffers v))
+                             (incf users))
+                           (when (erc-channel-user-op-p k)
+                             (incf ops)))
+                         hash-table)
+                (message "%d users (%s ops) are online on %s" users ops channel))
+            (user-error "The current buffer is not a channel")))
+      (user-error "You must first be connected on IRC")))
+
+  (defun my/erc-get-ops ()
+    "Displays the names of ops users on the current channel."
+    (interactive)
+    (if (get-buffer "irc.freenode.net:6667")
+        (let ((channel (erc-default-target)))
+          (if (and channel (erc-channel-p channel))
+              (let (ops)
+                (maphash (lambda (nick cdata)
+                           (if (and (cdr cdata)
+                                    (erc-channel-user-op (cdr cdata)))
+                               (setq ops (cons nick ops))))
+                         erc-channel-users)
+                (if ops
+                    (message "The online ops users are: %s"  (mapconcat 'identity ops " "))
+                  (message "There are no ops users online on %s" channel)))
+            (user-error "The current buffer is not a channel")))
+      (user-error "You must first be connected on IRC")))
+
+  (defun my/erc-notify (nickname message)
+    "Displays a notification message for ERC."
+    (let* ((channel (buffer-name))
+           (nick (erc-hl-nicks-trim-irc-nick nickname))
+           (title (if (string-match-p (concat "^" nickname) channel)
+                      nick
+                    (concat nick " (" channel ")")))
+           (msg (s-trim (s-collapse-whitespace message))))
+      (alert (concat nick ": " msg) :title title)))
+
+  (defun my/erc-preprocess (string)
+    "Avoids channel flooding."
+    (setq str (string-trim (replace-regexp-in-string "\n+" " " str))))
+
+  (defun my/erc-reset-track-mode ()
+    "Resets ERC track mode."
+    (interactive)
+    (setq erc-modified-channels-alist nil)
+    (erc-modified-channels-update)
+    (erc-modified-channels-display)
+    (force-mode-line-update))
+
+  (defun my/erc-start-or-switch ()
+    "Connects to ERC, or switch to last active buffer."
+    (interactive)
+    (if (get-buffer "irc.freenode.net:6667")
+        (erc-track-switch-buffer 1)
+      (erc :server "irc.freenode.net" :port 6667 :nick "rememberYou")))
+  :hook ((ercn-notify . my/erc-notify)
+         (erc-send-pre . my/erc-preprocess))
+  :custom-face
+  (erc-action-face ((t (:foreground "#8fbcbb"))))
+  (erc-error-face ((t (:foreground "#bf616a"))))
+  (erc-input-face ((t (:foreground "#9999ff"))))
+  (erc-notice-face ((t (:foreground "#9999ff"))))
+  (erc-timestamp-face ((t (:foreground "#cc99ff"))))
+  :custom
+  (erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##c++" "##rust")))
+  (erc-autojoin-timing 'ident)
+  (erc-fill-function 'erc-fill-static)
+  (erc-fill-static-center 22)
+  (erc-header-line-format "%n on %t (%m)")
+  (erc-hide-list '("JOIN" "PART" "QUIT"))
+  (erc-join-buffer 'bury)
+  (erc-kill-buffer-on-part t)
+  (erc-kill-queries-on-quit t)
+  (erc-kill-server-buffer-on-quit t)
+  (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+  (erc-lurker-threshold-time 43200)
+  (erc-prompt-for-nickserv-password nil)
+  (erc-server-reconnect-attempts 5)
+  (erc-server-reconnect-timeout 3)
+  (erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+                             "324" "329" "332" "333" "353" "477"))
+  :config
+  (add-to-list 'erc-modules 'notifications)
+  (add-to-list 'erc-modules 'spelling)
+  (erc-services-mode 1)
+  (erc-update-modules))
+
+(use-package erc-hl-nicks :after erc)
+(use-package erc-image :after erc)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; rainbow mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package rainbow-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ivy config
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package ivy
@@ -1064,7 +1185,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (lsp-treemacs rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
+    (erc-hl-nicks erc-image lsp-treemacs rust-mode lsp-ui treemacs treemacs-icons-dired treemacs-magit treemacs-projectile doom-themes hydra pfuture ace-window gnu-elpa-keyring-update auto-yasnippet rainbow-mode markdown-preview-mode company-lsp ivy-yasnippet go-projectile org-super-agenda all-the-icons-ivy all-the-icons neotree zzz-to-char yarn-mode yapfify yaml-mode writegood-mode window-numbering which-key wgrep web-mode vlf use-package string-inflection sourcerer-theme realgud rainbow-delimiters powerline origami multiple-cursors modern-cpp-font-lock markdown-mode magit-gerrit json-mode irony hungry-delete google-c-style go-mode git-gutter git-gutter+ flyspell-correct-ivy flycheck-ycmd flycheck-rust flycheck-pyflakes elpy ein edit-server cuda-mode counsel-etags company-ycmd company-jedi color-theme-solarized color-theme-sanityinc-solarized cmake-font-lock clang-format challenger-deep-theme beacon autopair auto-package-update auctex atom-one-dark-theme)))
  '(pdf-view-midnight-colors (quote ("#c4c4c4" . "#292b2e")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
