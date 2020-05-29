@@ -238,7 +238,7 @@
     (interactive)
     (if (get-buffer "irc.freenode.net:6667")
         (erc-track-switch-buffer 1)
-      (erc :server "irc.freenode.net" :port 6667 :nick "rememberYou")))
+      (erc :server "irc.freenode.net" :port 6667 :nick "jdao")))
   :hook ((ercn-notify . my/erc-notify)
          (erc-send-pre . my/erc-preprocess))
   :custom-face
